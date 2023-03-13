@@ -19,7 +19,8 @@ class CreateEventsTable extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('banner')->nullable();
-            $table->json('organizer')->nullable();
+            $table->string('organizer_name')->nullable();
+            $table->string('organizer_logo')->nullable();
             $table->json('date')->nullable();
             $table->json('location')->nullable();
             $table->json('setting')->nullable();

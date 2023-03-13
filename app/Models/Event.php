@@ -16,6 +16,14 @@ class Event extends Model
         'setting' => 'array',
     ];
 
+    public function scopeSearch($query, $value)
+    {
+        if (!$value) return $query;
+        return $query->where('name', 'like', '%' . $value . '%')
+            ->orWhere('description', 'like', '%' . $value . '%')
+            ->orWhere('organizer_logo', 'like', '%' . $value . '%');
+    }
+
     public function tickets() {
         return $this->hasMany(Ticket::class)->orderBy('price');
     }

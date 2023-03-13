@@ -53,12 +53,7 @@ class EventController extends Controller
     public function index(Request $request)
     {
         $event = Event::query();
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $event = $event->where('name', 'like', '%' . $search . '%')
-                ->orWhere('description', 'like', '%' . $search . '%')
-                ->whereJsonContains('organizer->name', $search);
-        }
+        if ($request->filled('search')) $event = $event->search($request->search);
         $event = $event->with(['tickets'])->paginate()->appends(request()->query());
         return (new GeneralResponseCollection($event, ['Success get event'], true))
             ->response()->setStatusCode(200);
