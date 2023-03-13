@@ -10,7 +10,6 @@ class Event extends Model
     use HasFactory;
 
     protected $casts = [
-        'organizer' => 'array',
         'date' => 'array',
         'location' => 'array',
         'setting' => 'array',

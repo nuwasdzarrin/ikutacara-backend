@@ -31,7 +31,8 @@ class EventController extends Controller
             'store' => [
                 'name' => 'required|string|max:255',
                 'banner' => 'required|string|max:255',
-                'organizer' => 'required|array',
+                'organizer_name' => 'required|string|max:255',
+                'organizer_logo' => 'string|max:255|nullable',
                 'date' => 'required|array',
                 'location' => 'required|array',
                 'description' => 'string|nullable',
