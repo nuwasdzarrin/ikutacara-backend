@@ -19,8 +19,8 @@ class Event extends Model
     {
         if (!$value) return $query;
         return $query->where('name', 'like', '%' . $value . '%')
-            ->orWhere('description', 'like', '%' . $value . '%')
-            ->orWhere('organizer_logo', 'like', '%' . $value . '%');
+//            ->orWhere('description', 'like', '%' . $value . '%')
+            ->orWhere('organizer_name', 'like', '%' . $value . '%');
     }
 
     public function tickets() {
