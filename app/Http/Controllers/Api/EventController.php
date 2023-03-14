@@ -145,6 +145,13 @@ class EventController extends Controller
         //
     }
 
+    public function slug($slug)
+    {
+        $event = Event::query()->where('slug', $slug)->first();
+        return (new GeneralResponseCollection($event, ['Success get event'], true))
+            ->response()->setStatusCode(200);
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
