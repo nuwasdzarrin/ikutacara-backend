@@ -147,7 +147,7 @@ class EventController extends Controller
 
     public function slug($slug)
     {
-        $event = Event::query()->where('slug', $slug)->first();
+        $event = Event::query()->where('slug', $slug)->with(['tickets'])->first();
         return (new GeneralResponseCollection($event, ['Success get event'], true))
             ->response()->setStatusCode(200);
     }
