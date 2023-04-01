@@ -21,9 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('events/detail/{slug}', [Api\EventController::class, 'slug'])->name('uploader.slug');
 Route::apiResource('events', Api\EventController::class, [ 'as' => 'api' ]);
-//Route::apiResource('tickets', 'Api\TicketController', [ 'as' => 'api' ]);
-//Route::apiResource('book_users', 'Api\BookUserController', [ 'as' => 'api' ]);
-//Route::apiResource('book_tickets', 'Api\BookTicketController', [ 'as' => 'api' ]);
+Route::apiResource('orders', Api\OrderController::class, [ 'as' => 'api' ]);
 
 Route::post('/wysiwyg_uploader', [Api\UploaderController::class, 'wysiwyg'])->name('uploader.wysiwyg');
 Route::post('/image_uploader', [Api\UploaderController::class, 'image'])->name('uploader.image');
