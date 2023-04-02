@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GeneralResponseCollection;
 use App\Models\Order;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -39,14 +40,17 @@ class OrderController extends Controller
             ]
         ];
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        //
+        $order = Order::query();
+        if ($request->filled('active'))
+            $order = $order->whereHas('event', function ($query) {
+               return $query->whereDate('date->started', '>=', Carbon::now());
+            });
+        $order = $order->with(['event'])->paginate();
+        return (new GeneralResponseCollection($order, ['Success get order'], true))
+            ->response()->setStatusCode(200);
     }
 
     /**
