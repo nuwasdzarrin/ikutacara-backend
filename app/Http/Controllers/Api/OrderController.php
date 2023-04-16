@@ -83,8 +83,13 @@ class OrderController extends Controller
         }
         $order = new Order;
         $order->user_id = auth()->user() ? auth()->user()->id : 1;
+        $order->uuid = Str::uuid();
         foreach (self::rules()['store'] as $key => $value) {
-            if (in_array($key, array_keys(self::rules($request)['hasMany']))) continue;
+            if (in_array($key, array_keys(self::rules($request)['hasMany']))) {
+                $order->order_quantity = count($request->{$key});
+                $order->order_price = array_sum(array_column($request->{$key}, 'ticket_price'));
+                continue;
+            }
             if (Str::contains($value, [ 'file', 'image', 'mimetypes', 'mimes' ])) {
                 if ($request->hasFile($key)) {
                     $order->{$key} = $request->file($key)->store('bank_accounts');
@@ -124,15 +129,11 @@ class OrderController extends Controller
             ->response()->setStatusCode(201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function show($uuid)
     {
-        //
+        $order = Order::query()->where('uuid', $uuid)->with(['event', 'order_items'])->first();
+        return (new GeneralResponseCollection($order, ['Success get detail order'], true))
+            ->response()->setStatusCode(200);
     }
 
     /**

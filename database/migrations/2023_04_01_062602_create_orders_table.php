@@ -15,6 +15,7 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->string('uuid');
             $table->integer('event_id')->nullable();
             $table->integer('user_id')->nullable();
             $table->string('order_user_name')->nullable();
@@ -22,6 +23,7 @@ class CreateOrdersTable extends Migration
             $table->string('order_user_whatsapp')->nullable();
             $table->integer('order_quantity')->nullable();
             $table->bigInteger('order_price')->nullable();
+            $table->string('order_status')->default('created');
             $table->timestamps();
         });
     }
