@@ -21,6 +21,7 @@ class OrderController extends Controller
                 'order_items' => [
                     'ticket_id' => 'required|numeric|exists:tickets,id',
                     'ticket_price' => 'required|numeric',
+                    'ticket_name' => 'required|string|max:255',
                     'attendee' => 'required|array',
                 ],
             ],

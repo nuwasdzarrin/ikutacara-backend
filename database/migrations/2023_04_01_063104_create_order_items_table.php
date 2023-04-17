@@ -18,6 +18,7 @@ class CreateOrderItemsTable extends Migration
             $table->integer('order_id');
             $table->integer('ticket_id');
             $table->bigInteger('ticket_price');
+            $table->string('ticket_name')->nullable();
             $table->string('ticket_code');
             $table->string('ticket_status')->nullable();
             $table->json('attendee');
