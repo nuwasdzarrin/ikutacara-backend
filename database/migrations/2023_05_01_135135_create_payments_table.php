@@ -18,6 +18,7 @@ class CreatePaymentsTable extends Migration
             $table->string('name');
             $table->string('code');
             $table->string('logo')->nullable();
+            $table->text('note')->nullable();
             $table->enum('cost_type', ['fixed', 'percent'])->default('fixed');
             $table->float('cost_value');
             $table->timestamps();
