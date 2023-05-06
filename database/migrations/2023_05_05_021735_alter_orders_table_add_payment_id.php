@@ -14,7 +14,8 @@ class AlterOrdersTableAddPaymentId extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('xendit_payment_id')->nullable()->after('event_id');
+            $table->unsignedInteger('payment_id')->nullable()->after('event_id');
+            $table->string('xendit_payment_id')->nullable()->after('payment_id');
             $table->string('payment_url')->nullable()->after('order_price');
             $table->string('payment_status')->nullable()->after('order_status');
             $table->timestamp('expired_at')->nullable()->after('payment_status');
@@ -29,7 +30,7 @@ class AlterOrdersTableAddPaymentId extends Migration
     public function down()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['xendit_payment_id','payment_url','payment_status','expired_at']);
+            $table->dropColumn(['payment_id','xendit_payment_id','payment_url','payment_status','expired_at']);
         });
     }
 }

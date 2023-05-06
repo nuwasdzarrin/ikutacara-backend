@@ -99,14 +99,49 @@ class OrderController extends Controller
         Xendit::setApiKey($this->api_key);
         $create_payment = [];
         $payment_url = null;
-        $expires_at = null;
-        if ($payment->code === 'QRIS') {
+        $expires_at = now()->addDay(1);
+        if (in_array($payment->code, ['ID_DANA','ID_OVO'])) {
+            $params = [
+                'reference_id' => $reference_uuid,
+                'type' => 'DYNAMIC',
+                'channel_code' => $payment->code,
+                'checkout_method' => 'ONE_TIME_PAYMENT',
+                'channel_properties' => [
+                    'success_redirect_url' => 'https://yourwebsite.com/order/123',
+                ],
+                'currency' => 'IDR',
+                'amount' => 10000,
+                'metadata' => [
+                    'reference_id' => $reference_uuid,
+                    'event_id' => $request->event_id,
+                    'order_user_name' => $request->order_user_name,
+                    'order_user_email' => $request->order_user_email,
+                    'order_user_whatsapp' => $request->order_user_whatsapp
+                ]
+            ];
+            $create_payment = \Xendit\EWallets::createEWalletCharge($params);
+            if (!$create_payment)
+                return (new GeneralResponseCollection([], ['Create payment fail'], false))
+                    ->response()->setStatusCode(400);
+            $payment_url = $create_payment['actions']['mobile_web_checkout_url'] ?? null;
+        }
+        else if (in_array($payment->code, ['MANDIRI','BNI'])) {
+            $params = [
+                'external_id' => $reference_uuid,
+                "bank_code" => $payment->code,
+                "name" => "PT Kreatora Teknologi Indonesia",
+                "is_single_use" => true,
+                "is_closed" => true,
+                "expected_amount" => 150000
+            ];
+            $create_payment = \Xendit\VirtualAccounts::create($params);
+        }
+        else if ($payment->code === 'QRIS') {
             $params = [
                 'external_id' => $reference_uuid,
                 'type' => 'DYNAMIC',
                 'channel_code' => 'ID_DANA',
                 'callback_url' => 'https://webhook.site',
-                'expires_at' => now()->addDay(1)->format('c'),
                 'amount' => 10000,
                 'metadata' => [
                     'reference_id' => $reference_uuid,
@@ -120,8 +155,7 @@ class OrderController extends Controller
             if (!$create_payment)
                 return (new GeneralResponseCollection([], ['Create payment fail'], false))
                     ->response()->setStatusCode(400);
-            $payment_url = $create_payment['qr_string'];
-            $expires_at = $create_payment['expires_at'];
+            $payment_url = $create_payment['qr_string'] ?? null;
         }
 
         $order = new Order;
