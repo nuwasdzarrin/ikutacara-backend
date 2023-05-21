@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('auth/google', [Api\AuthController::class, 'google_login'])->name('uploader.slug');
 Route::get('events/detail/{slug}', [Api\EventController::class, 'slug'])->name('uploader.slug');
 Route::apiResource('events', Api\EventController::class, [ 'as' => 'api' ]);
 Route::apiResource('orders', Api\OrderController::class, [ 'as' => 'api' ]);

@@ -99,6 +99,9 @@ class OrderController extends Controller
         Xendit::setApiKey($this->api_key);
         $create_payment = [];
         $payment_url = null;
+        $payment_account_name = null;
+        $item_price = array_sum(array_column($request->order_items, 'ticket_price'));
+        $admin_fee = $payment['cost_type'] == 'percent' ? ($payment['cost_value']/100) * $item_price : $payment['cost_value'];
         $expires_at = now()->addDay(1);
         if (in_array($payment->code, ['ID_DANA','ID_OVO'])) {
             $params = [
@@ -110,7 +113,7 @@ class OrderController extends Controller
                     'success_redirect_url' => 'https://yourwebsite.com/order/123',
                 ],
                 'currency' => 'IDR',
-                'amount' => 10000,
+                'amount' => $item_price + $admin_fee,
                 'metadata' => [
                     'reference_id' => $reference_uuid,
                     'event_id' => $request->event_id,
@@ -132,9 +135,14 @@ class OrderController extends Controller
                 "name" => "PT Kreatora Teknologi Indonesia",
                 "is_single_use" => true,
                 "is_closed" => true,
-                "expected_amount" => 150000
+                "expected_amount" => $item_price + $admin_fee
             ];
             $create_payment = \Xendit\VirtualAccounts::create($params);
+            if (!$create_payment)
+                return (new GeneralResponseCollection([], ['Create payment fail'], false))
+                    ->response()->setStatusCode(400);
+            $payment_url = $create_payment['account_number'] ?? null;
+            $payment_account_name = $create_payment['name'] ?? null;
         }
         else if ($payment->code === 'QRIS') {
             $params = [
@@ -142,7 +150,7 @@ class OrderController extends Controller
                 'type' => 'DYNAMIC',
                 'channel_code' => 'ID_DANA',
                 'callback_url' => 'https://webhook.site',
-                'amount' => 10000,
+                'amount' => $item_price + $admin_fee,
                 'metadata' => [
                     'reference_id' => $reference_uuid,
                     'event_id' => $request->event_id,
@@ -163,14 +171,17 @@ class OrderController extends Controller
         $order->uuid = $reference_uuid;
 
         $order->xendit_payment_id = $create_payment['id'];
+        $order->order_price = $item_price;
+        $order->admin_fee = $admin_fee;
         $order->payment_url = $payment_url;
+        $order->order_status = "menunggu pembayaran";
         $order->payment_status = $create_payment['status'];
+        $order->payment_account_name = $payment_account_name;
         $order->expired_at = $expires_at;
 
         foreach (self::rules()['store'] as $key => $value) {
             if (in_array($key, array_keys(self::rules($request)['hasMany']))) {
                 $order->order_quantity = count($request->{$key});
-                $order->order_price = array_sum(array_column($request->{$key}, 'ticket_price'));
                 continue;
             }
             if (Str::contains($value, [ 'file', 'image', 'mimetypes', 'mimes' ])) {
