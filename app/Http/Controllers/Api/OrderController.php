@@ -59,7 +59,7 @@ class OrderController extends Controller
             $order = $order->whereHas('event', function ($query) {
                return $query->whereDate('date->started', '>=', Carbon::now());
             });
-        $order = $order->orderBy('id', 'desc')->with(['event'])->paginate();
+        $order = $order->orderBy('id', 'desc')->with(['event', 'order_items'])->paginate();
         return (new GeneralResponseCollection($order, ['Success get order'], true))
             ->response()->setStatusCode(200);
     }

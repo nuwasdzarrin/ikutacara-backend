@@ -24,6 +24,10 @@ Route::get('events/detail/{slug}', [Api\EventController::class, 'slug'])->name('
 Route::apiResource('events', Api\EventController::class, [ 'as' => 'api' ]);
 Route::apiResource('orders', Api\OrderController::class, [ 'as' => 'api' ]);
 Route::apiResource('payments', Api\PaymentController::class, [ 'as' => 'api' ]);
+Route::get('profile', [Api\ProfileController::class, 'index'])->name('profile.index');
+Route::put('profile', [Api\ProfileController::class, 'update'])->name('profile.update');
 
 Route::post('/wysiwyg_uploader', [Api\UploaderController::class, 'wysiwyg'])->name('uploader.wysiwyg');
 Route::post('/image_uploader', [Api\UploaderController::class, 'image'])->name('uploader.image');
+Route::middleware('auth:sanctum')->post('/avatar_uploader', [Api\UploaderController::class, 'avatar'])
+    ->name('uploader.avatar');

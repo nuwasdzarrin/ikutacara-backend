@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GeneralResponseCollection;
 use App\Models\Uploader;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
@@ -21,10 +22,10 @@ class UploaderController extends Controller
         ];
     }
 
-    public function uploaderImage($req_image) {
+    public function uploaderImage($req_image, $ori=null, $thumb=null) {
         try {
-            $original = 'uploader/original/';
-            $thumbnail = 'uploader/thumbnail/';
+            $original = $ori ?? 'uploader/original/';
+            $thumbnail = $thumb ?? 'uploader/thumbnail/';
 
             $fileName = now()->format('Y-m-d_H-i-s').'_'.$req_image->getClientOriginalName();
             $extension = $req_image->getClientOriginalExtension();
@@ -76,6 +77,34 @@ class UploaderController extends Controller
         $uploader = self::uploaderImage($request->file('file'));
         if ($uploader['status']) {
             return response($uploader['data']['url'],200)->withHeaders(['content-type' => 'text/html']);
+        } else {
+            return (new GeneralResponseCollection([], ['failed to upload file'], false))
+                ->response()->setStatusCode(400);
+        }
+    }
+
+    public function avatar(Request $request) {
+        $validator      = Validator::make($request->all(), self::rules()['image']);
+        $errors         = array_values($validator->errors()->all());
+        if ($errors) {
+            return (new GeneralResponseCollection([], $errors, true))
+                ->response()->setStatusCode(400);
+        }
+        $user_id = auth()->user()->id;
+        $profile = User::query()->findOrFail($user_id);
+        if (!$profile) {
+            return response()->json([
+                'data' => [],
+                'message' => ['user not found']
+            ], 400);
+        }
+        $uploader = self::uploaderImage($request->file('file'),
+            'uploader/avatar/original/', 'uploader/avatar/thumbnail/');
+        if ($uploader['status']) {
+            $profile->avatar = $uploader['data']['thumbnail'];
+            $profile->save();
+            return (new GeneralResponseCollection($profile, ['Success upload image'], true))
+                ->response()->setStatusCode(200);
         } else {
             return (new GeneralResponseCollection([], ['failed to upload file'], false))
                 ->response()->setStatusCode(400);
