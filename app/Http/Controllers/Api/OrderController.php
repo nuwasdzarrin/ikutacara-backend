@@ -149,7 +149,6 @@ class OrderController extends Controller
                 'external_id' => $reference_uuid,
                 'type' => 'DYNAMIC',
                 'channel_code' => 'ID_DANA',
-                'callback_url' => 'https://webhook.site',
                 'amount' => $item_price + $admin_fee,
                 'metadata' => [
                     'reference_id' => $reference_uuid,
