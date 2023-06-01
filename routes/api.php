@@ -23,6 +23,14 @@ Route::post('auth/google', [Api\AuthController::class, 'google_login'])->name('u
 Route::get('events/detail/{slug}', [Api\EventController::class, 'slug'])->name('uploader.slug');
 Route::apiResource('events', Api\EventController::class, [ 'as' => 'api' ]);
 Route::apiResource('orders', Api\OrderController::class, [ 'as' => 'api' ]);
+Route::post('payments/callback/va_create', [Api\PaymentController::class, 'callback_va_create'])
+    ->name('payments.callback_va_create');
+Route::post('payments/callback/va_paid', [Api\PaymentController::class, 'callback_va_paid'])
+    ->name('payments.callback_va_paid');
+Route::post('payments/callback/qrcode_paid', [Api\PaymentController::class, 'callback_qrcode_paid'])
+    ->name('payments.callback_qrcode_paid');
+Route::post('payments/callback/ewallet_paid', [Api\PaymentController::class, 'callback_ewallet_paid'])
+    ->name('payments.callback_ewallet_paid');
 Route::apiResource('payments', Api\PaymentController::class, [ 'as' => 'api' ]);
 Route::get('profile', [Api\ProfileController::class, 'index'])->name('profile.index');
 Route::put('profile', [Api\ProfileController::class, 'update'])->name('profile.update');

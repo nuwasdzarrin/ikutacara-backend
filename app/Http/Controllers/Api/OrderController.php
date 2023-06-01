@@ -174,7 +174,7 @@ class OrderController extends Controller
         $order->order_price = $item_price;
         $order->admin_fee = $admin_fee;
         $order->payment_url = $payment_url;
-        $order->order_status = "menunggu pembayaran";
+        $order->order_status = in_array($payment->code, ['MANDIRI','BNI']) ? "idle" : "menunggu pembayaran";
         $order->payment_status = $create_payment['status'];
         $order->payment_account_name = $payment_account_name;
         $order->expired_at = $expires_at;
