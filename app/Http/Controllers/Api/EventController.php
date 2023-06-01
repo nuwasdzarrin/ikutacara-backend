@@ -98,7 +98,7 @@ class EventController extends Controller
             if (in_array($key, array_keys(self::rules($request)['hasMany']))) continue;
             if (Str::contains($value, [ 'file', 'image', 'mimetypes', 'mimes' ])) {
                 if ($request->hasFile($key)) {
-                    $event->{$key} = $request->file($key)->store('bank_accounts');
+                    $event->{$key} = $request->file($key)->store('events');
                 } elseif ($request->exists($key)) {
                     $event->{$key} = $request->{$key};
                 }

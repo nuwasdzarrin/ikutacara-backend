@@ -222,7 +222,8 @@ class OrderController extends Controller
 
     public function show($uuid)
     {
-        $order = Order::query()->where('uuid', $uuid)->with(['event', 'order_items'])->first();
+        $order = Order::query()->where('uuid', $uuid)
+            ->with(['event', 'order_items', 'payment_instructions'])->first();
         return (new GeneralResponseCollection($order, ['Success get detail order'], true))
             ->response()->setStatusCode(200);
     }

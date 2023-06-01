@@ -12,6 +12,10 @@ class Payment extends Model
 
     protected $appends = ['logo_url'];
 
+    public function payment_instructions() {
+        return $this->hasMany(PaymentInstruction::class);
+    }
+
     public function getLogoUrlAttribute() {
         return $this->logo ? URL::to('/storage/'.$this->logo) : '';
     }

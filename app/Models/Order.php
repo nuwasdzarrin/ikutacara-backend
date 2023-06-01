@@ -20,6 +20,9 @@ class Order extends Model
     public function order_items() {
         return $this->hasMany(OrderItem::class);
     }
+    public function payment_instructions() {
+        return $this->hasMany(PaymentInstruction::class, 'payment_id', 'payment_id');
+    }
 
     public function getPaymentNameAttribute() {
         return $this->payment ? $this->payment->name : '';
