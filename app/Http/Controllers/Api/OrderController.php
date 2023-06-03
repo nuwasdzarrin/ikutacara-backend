@@ -150,6 +150,7 @@ class OrderController extends Controller
                 'type' => 'DYNAMIC',
                 'channel_code' => 'ID_DANA',
                 'amount' => $item_price + $admin_fee,
+                'callback_url' => config('payment.xendit.callback_base_url').'/api/payments/callback/qrcode_paid',
                 'metadata' => [
                     'reference_id' => $reference_uuid,
                     'event_id' => $request->event_id,
