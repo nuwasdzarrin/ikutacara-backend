@@ -190,13 +190,4 @@ class EventController extends Controller
     {
         //
     }
-
-    public function committee_index()
-    {
-        $events = Event::query()->whereHas('committees', function ($query) {
-            return $query->where('user_id', auth()->user() ? auth()->user()->id : 0);
-        })->orderBy('id', 'desc')->get();
-        return (new GeneralResponseCollection($events, ['Success get event'], true))
-            ->response()->setStatusCode(200);
-    }
 }

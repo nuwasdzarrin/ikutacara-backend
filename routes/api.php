@@ -42,4 +42,7 @@ Route::post('image_uploader', [Api\UploaderController::class, 'image'])->name('u
 Route::middleware('auth:sanctum')->post('/avatar_uploader', [Api\UploaderController::class, 'avatar'])
     ->name('uploader.avatar');
 
-Route::get('committee/events', [Api\EventController::class, 'committee_index'])->name('committee_events.index');
+Route::get('committee/events', [Api\CommitteeController::class, 'committee_event'])->name('committee_events');
+Route::get('committee/events/{event_id}/members', [Api\CommitteeController::class, 'committee_member'])
+    ->name('committee_member');
+Route::post('committee/add_member', [Api\CommitteeController::class, 'committee_add_member'])->name('committee_add_member');
