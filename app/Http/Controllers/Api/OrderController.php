@@ -49,7 +49,7 @@ class OrderController extends Controller
     public function __construct()
     {
         $this->api_key = config('payment.xendit.api_key');
-//        $this->middleware('auth:api');
+        $this->middleware('auth:sanctum');
     }
 
     public function index(Request $request)
@@ -167,7 +167,7 @@ class OrderController extends Controller
         }
 
         $order = new Order;
-        $order->user_id = auth()->user() ? auth()->user()->id : 1;
+        $order->user_id = auth()->user() ? auth()->user()->id : 0;
         $order->uuid = $reference_uuid;
 
         $order->xendit_payment_id = $create_payment['id'];

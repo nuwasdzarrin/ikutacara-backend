@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GeneralResponseCollection;
+use App\Models\Committee;
 use App\Models\Event;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\Resource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -48,15 +48,15 @@ class EventController extends Controller
 
     public function __construct()
     {
-//        $this->middleware('auth:api')->except(['index']);
+        $this->middleware('auth:sanctum')->except(['index', 'slug']);
     }
 
     public function index(Request $request)
     {
-        $event = Event::query();
-        if ($request->filled('search')) $event = $event->search($request->search);
-        $event = $event->with(['tickets'])->paginate()->appends(request()->query());
-        return (new GeneralResponseCollection($event, ['Success get event'], true))
+        $events = Event::query();
+        if ($request->filled('search')) $events = $events->search($request->search);
+        $events = $events->with(['tickets'])->paginate()->appends(request()->query());
+        return (new GeneralResponseCollection($events, ['Success get event'], true))
             ->response()->setStatusCode(200);
     }
 
@@ -91,7 +91,7 @@ class EventController extends Controller
         }
 
         $event = new Event;
-        $event->user_id = auth()->user() ? auth()->user()->id : 1;
+        $event->user_id = auth()->user() ? auth()->user()->id : 0;
         $event->type = array_key_exists('is_online', $request['location']) && $request['location']['is_online'] ? 'online' : 'offline';
         $event->slug = Str::slug($request->name).'-'.random_int(1000, 9999);
         foreach (self::rules($request)['store'] as $key => $value) {
@@ -109,6 +109,11 @@ class EventController extends Controller
         try {
             DB::beginTransaction();
             $event->save();
+            $committee = new Committee;
+            $committee->user_id = $event->user_id;
+            $committee->event_id = $event->getKey();
+            $committee->committee_rule = Committee::COMMITTEE_RULES[0];
+            $committee->save();
             foreach (self::rules($request)['hasMany'] as $key => $rule) {
                 if (!$request->exists($key)) continue;
                 $models = [];
@@ -184,5 +189,14 @@ class EventController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function committee_index()
+    {
+        $events = Event::query()->whereHas('committees', function ($query) {
+            return $query->where('user_id', auth()->user() ? auth()->user()->id : 0);
+        })->orderBy('id', 'desc')->get();
+        return (new GeneralResponseCollection($events, ['Success get event'], true))
+            ->response()->setStatusCode(200);
     }
 }

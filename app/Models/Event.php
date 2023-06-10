@@ -26,4 +26,8 @@ class Event extends Model
     public function tickets() {
         return $this->hasMany(Ticket::class)->orderBy('price');
     }
+
+    public function committees() {
+        return $this->hasMany(Committee::class);
+    }
 }

@@ -37,7 +37,9 @@ Route::apiResource('payments', Api\PaymentController::class, [ 'as' => 'api' ]);
 Route::get('profile', [Api\ProfileController::class, 'index'])->name('profile.index');
 Route::put('profile', [Api\ProfileController::class, 'update'])->name('profile.update');
 
-Route::post('/wysiwyg_uploader', [Api\UploaderController::class, 'wysiwyg'])->name('uploader.wysiwyg');
-Route::post('/image_uploader', [Api\UploaderController::class, 'image'])->name('uploader.image');
+Route::post('wysiwyg_uploader', [Api\UploaderController::class, 'wysiwyg'])->name('uploader.wysiwyg');
+Route::post('image_uploader', [Api\UploaderController::class, 'image'])->name('uploader.image');
 Route::middleware('auth:sanctum')->post('/avatar_uploader', [Api\UploaderController::class, 'avatar'])
     ->name('uploader.avatar');
+
+Route::get('committee/events', [Api\EventController::class, 'committee_index'])->name('committee_events.index');
