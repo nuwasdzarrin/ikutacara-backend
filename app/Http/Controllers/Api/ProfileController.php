@@ -33,6 +33,20 @@ class ProfileController extends Controller
             ->response()->setStatusCode(200);
     }
 
+    public function search_user(Request $request)
+    {
+        $email = $request->email;
+        if (!$email)
+            return (new GeneralResponseCollection([], ['Fail search'], false))
+                ->response()->setStatusCode(200);
+        $profile = User::query()->where('email', $email)->first();
+        if (!$profile)
+            return (new GeneralResponseCollection([], ['Fail search'], false))
+                ->response()->setStatusCode(200);
+        return (new GeneralResponseCollection($profile, ['Success get user'], true))
+            ->response()->setStatusCode(200);
+    }
+
     public function update(Request $request)
     {
         $validator      = Validator::make($request->all(), self::rules($request)['update']);

@@ -28,6 +28,18 @@ class CommitteeController extends Controller
             ->response()->setStatusCode(200);
     }
 
+    public function committee_member_delete($event_id, $id) {
+        $committee = Committee::query()->findOrFail($id);
+        if (!$committee) {
+            return (new GeneralResponseCollection([], ['Member not found'], true))
+                ->response()->setStatusCode(400);
+        }
+        $committee->delete();
+        $member = Committee::query()->where('event_id', $event_id)->with('user')->get();
+        return (new GeneralResponseCollection($member, ['Success deleted'], true))
+            ->response()->setStatusCode(200);
+    }
+
     public function committee_add_member(Request $request)
     {
         $request->validate([

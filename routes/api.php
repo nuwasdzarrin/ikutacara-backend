@@ -35,6 +35,7 @@ Route::post('payments/callback/ewallet_paid', [Api\PaymentController::class, 'ca
 Route::apiResource('payments', Api\PaymentController::class, [ 'as' => 'api' ]);
 
 Route::get('profile', [Api\ProfileController::class, 'index'])->name('profile.index');
+Route::get('user/search', [Api\ProfileController::class, 'search_user'])->name('profile.search_user');
 Route::put('profile', [Api\ProfileController::class, 'update'])->name('profile.update');
 
 Route::post('wysiwyg_uploader', [Api\UploaderController::class, 'wysiwyg'])->name('uploader.wysiwyg');
@@ -45,4 +46,6 @@ Route::middleware('auth:sanctum')->post('/avatar_uploader', [Api\UploaderControl
 Route::get('committee/events', [Api\CommitteeController::class, 'committee_event'])->name('committee_events');
 Route::get('committee/events/{event_id}/members', [Api\CommitteeController::class, 'committee_member'])
     ->name('committee_member');
+Route::delete('committee/events/{event_id}/members/{id}', [Api\CommitteeController::class, 'committee_member_delete'])
+    ->name('committee_member.delete');
 Route::post('committee/add_member', [Api\CommitteeController::class, 'committee_add_member'])->name('committee_add_member');
