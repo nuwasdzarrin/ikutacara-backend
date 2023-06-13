@@ -9,6 +9,8 @@ class OrderItem extends Model
 {
     use HasFactory;
 
+    const STATUS = ['waiting', 'active', 'entry', 'expired'];
+
     protected $casts = [
         'attendee' => 'array'
     ];

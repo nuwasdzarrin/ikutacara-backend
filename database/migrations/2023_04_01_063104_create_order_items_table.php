@@ -16,11 +16,12 @@ class CreateOrderItemsTable extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->integer('order_id');
+            $table->integer('event_id');
             $table->integer('ticket_id');
             $table->bigInteger('ticket_price');
             $table->string('ticket_name')->nullable();
             $table->string('ticket_code');
-            $table->string('ticket_status')->nullable();
+            $table->enum('ticket_status', \App\Models\OrderItem::STATUS)->default('waiting');
             $table->json('attendee');
             $table->timestamps();
         });

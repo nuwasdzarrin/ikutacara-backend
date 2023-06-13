@@ -174,7 +174,7 @@ class OrderController extends Controller
         $order->order_price = $item_price;
         $order->admin_fee = $admin_fee;
         $order->payment_url = $payment_url;
-        $order->order_status = in_array($payment->code, ['MANDIRI','BNI']) ? "idle" : "menunggu pembayaran";
+        $order->order_status = "menunggu pembayaran";
         $order->payment_status = $create_payment['status'];
         $order->payment_account_name = $payment_account_name;
         $order->expired_at = $expires_at;
@@ -186,7 +186,7 @@ class OrderController extends Controller
             }
             if (Str::contains($value, [ 'file', 'image', 'mimetypes', 'mimes' ])) {
                 if ($request->hasFile($key)) {
-                    $order->{$key} = $request->file($key)->store('bank_accounts');
+                    $order->{$key} = $request->file($key)->store('orders');
                 } elseif ($request->exists($key)) {
                     $order->{$key} = $request->{$key};
                 }
@@ -205,6 +205,7 @@ class OrderController extends Controller
                     foreach ($rule as $index => $attr) {
                         $model->{$index} = $value[$index];
                     }
+                    $model['event_id'] = $order->event_id;
                     $model['ticket_code'] = strtoupper(Str::random(5)).$order->getKey();
                     $models[] = $model;
                 }

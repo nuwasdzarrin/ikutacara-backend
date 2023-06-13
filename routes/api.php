@@ -48,4 +48,7 @@ Route::get('committee/events/{event_id}/members', [Api\CommitteeController::clas
     ->name('committee_member');
 Route::delete('committee/events/{event_id}/members/{id}', [Api\CommitteeController::class, 'committee_member_delete'])
     ->name('committee_member.delete');
-Route::post('committee/add_member', [Api\CommitteeController::class, 'committee_add_member'])->name('committee_add_member');
+Route::post('committee/add_member', [Api\CommitteeController::class, 'committee_add_member'])
+    ->name('committee_add_member');
+Route::get('committee/events/{event_id}/order_items', [Api\OrderItemController::class, 'index'])
+    ->name('committee_order_items');
