@@ -54,7 +54,10 @@ class CommitteeController extends Controller
         if (!$owner)
             return (new GeneralResponseCollection([], ['Sorry you are not owner'], true))
                 ->response()->setStatusCode(400);
-        $committee_exist = Committee::query()->where('user_id', $request->user_id)->first();
+        $committee_exist = Committee::query()
+            ->where('user_id', $request->user_id)
+            ->where('event_id', $request->event_id)
+            ->first();
         if (!$committee_exist) {
             $committee = new Committee;
             $committee->user_id = $request->user_id;
