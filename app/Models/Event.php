@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Http\Controllers\Api\CommitteeController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\URL;
 
 class Event extends Model
 {
@@ -15,6 +16,7 @@ class Event extends Model
         'location' => 'array',
         'setting' => 'array',
     ];
+    protected $appends = ['banner_url', 'organizer_logo_url'];
 
     public function scopeSearch($query, $value)
     {
@@ -40,5 +42,18 @@ class Event extends Model
         $committee = $this->hasOne(Committee::class, 'event_id', 'id')
             ->where('user_id', auth()->user() ? auth()->user()->id : 0)->first();
         return $committee ? $committee->committee_rule : '';
+    }
+
+    public function getBannerUrlAttribute() {
+        if (!$this->banner) return '';
+        $url = parse_url($this->banner);
+        if ($url['path']) return URL::to($url['path']);
+        return '';
+    }
+    public function getOrganizerLogoUrlAttribute() {
+        if (!$this->organizer_logo) return '';
+        $url = parse_url($this->organizer_logo);
+        if ($url['path']) return URL::to($url['path']);
+        return '';
     }
 }
