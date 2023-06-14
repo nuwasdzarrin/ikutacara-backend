@@ -53,6 +53,13 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
+        'voyager' => [
+            'driver' => 'local',
+            'root' => public_path('uploader'),
+            'url' => env('APP_URL').'/uploader',
+            'visibility' => 'public',
+        ],
+
     ],
 
     /*
