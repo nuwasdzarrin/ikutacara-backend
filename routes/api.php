@@ -52,3 +52,5 @@ Route::post('committee/add_member', [Api\CommitteeController::class, 'committee_
     ->name('committee_add_member');
 Route::get('committee/events/{event_id}/order_items', [Api\OrderItemController::class, 'index'])
     ->name('committee_order_items');
+Route::post('committee/check_in', [Api\OrderItemController::class, 'check_in'])
+    ->name('committee_check_in');
