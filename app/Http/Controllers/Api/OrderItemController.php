@@ -62,7 +62,7 @@ class OrderItemController extends Controller
                 ->response()->setStatusCode(400);
         $order_item->ticket_status = OrderItem::STATUS[2];
         $order_item->save();
-        return (new GeneralResponseCollection($order_item, ['Successful check in'], false))
+        return (new GeneralResponseCollection($order_item, ['Successful check in'], true))
             ->response()->setStatusCode(200);
     }
 }
