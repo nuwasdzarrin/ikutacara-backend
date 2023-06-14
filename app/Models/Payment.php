@@ -17,6 +17,6 @@ class Payment extends Model
     }
 
     public function getLogoUrlAttribute() {
-        return $this->logo ? URL::to('/storage/'.$this->logo) : '';
+        return $this->logo ? URL::to('/uploader/'.$this->logo) : '';
     }
 }
