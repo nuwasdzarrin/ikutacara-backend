@@ -54,3 +54,5 @@ Route::get('committee/events/{event_id}/order_items', [Api\OrderItemController::
     ->name('committee_order_items');
 Route::post('committee/check_in', [Api\OrderItemController::class, 'check_in'])
     ->name('committee_check_in');
+Route::get('committee/events/{event_id}/tickets/summary', [Api\Committees\TicketController::class, 'summary'])
+    ->name('committee_ticket_summary');

@@ -12,7 +12,7 @@ class CommitteeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:sanctum')->except(['index', 'slug']);
+        $this->middleware('auth:sanctum');
     }
     public function committee_event()
     {
@@ -23,12 +23,27 @@ class CommitteeController extends Controller
             ->response()->setStatusCode(200);
     }
     public function committee_member($event_id) {
+        $owner = Committee::query()->where([
+            'user_id' => auth()->user() ? auth()->user()->id : 0,
+            'event_id' => $event_id,
+        ])->first();
+        if (!$owner)
+            return (new GeneralResponseCollection([], ['Sorry you are not member'], false))
+                ->response()->setStatusCode(400);
         $member = Committee::query()->where('event_id', $event_id)->with('user')->get();
         return (new GeneralResponseCollection($member, ['Success get members'], true))
             ->response()->setStatusCode(200);
     }
 
     public function committee_member_delete($event_id, $id) {
+        $owner = Committee::query()->where([
+            'user_id' => auth()->user() ? auth()->user()->id : 0,
+            'event_id' => $event_id,
+            'committee_rule' => 'owner',
+        ])->first();
+        if (!$owner)
+            return (new GeneralResponseCollection([], ['Sorry you are not owner'], false))
+                ->response()->setStatusCode(400);
         $committee = Committee::query()->findOrFail($id);
         if (!$committee) {
             return (new GeneralResponseCollection([], ['Member not found'], true))
@@ -52,7 +67,7 @@ class CommitteeController extends Controller
             'committee_rule' => 'owner',
         ])->first();
         if (!$owner)
-            return (new GeneralResponseCollection([], ['Sorry you are not owner'], true))
+            return (new GeneralResponseCollection([], ['Sorry you are not owner'], false))
                 ->response()->setStatusCode(400);
         $committee_exist = Committee::query()
             ->where('user_id', $request->user_id)
