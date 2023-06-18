@@ -17,15 +17,15 @@ class TicketController extends Controller
     }
 
     public function summary($event_id) {
-        $committee = Committee::query()->where([
+        $committee = Committee::query()->select(['committee_rule'])->where([
             'user_id' => auth()->user() ? auth()->user()->id : 0,
             'event_id' => $event_id,
         ]);
-        $is_owner = $committee->where('committee_rule', 'owner')->first();
         $is_member = $committee->first();
         if (!$is_member)
             return (new GeneralResponseCollection([], ['Sorry you are not member'], false))
                 ->response()->setStatusCode(400);
+        $is_owner = $committee->where('committee_rule', 'owner')->first();
         $tickets = Ticket::query()->select(['name','quota'])->where('event_id', $event_id)->get();
         $order_items = OrderItem::query()->select(['ticket_id', 'ticket_price', 'ticket_name', 'ticket_status'])
             ->where('event_id', $event_id)->get();
